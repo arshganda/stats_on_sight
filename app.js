@@ -124,6 +124,11 @@ app.get('/', (req, res) => {
   res.render('form.pug');
 });
 
+app.get('/game', async (req, res) => {
+  let gameId = req.query.gameId;
+  res.status(200).json(await getGameStats(gameId));
+});
+
 // Process the file upload and upload to Google Cloud Storage.
 app.post('/upload', multer.single('file'), (req, res, next) => {
   if (!req.file) {
@@ -236,7 +241,7 @@ async function getGameStats(gameID) {
         try {
           let json = JSON.parse(body);
           console.log(json);
-          return resolve(formatJson(json));
+          return resolve(formatJson(json, gameID));
         }
         catch (err) {
           console.log(err);
@@ -247,8 +252,9 @@ async function getGameStats(gameID) {
   });
 }
 
-function formatJson(json) {
+function formatJson(json, gameId) {
   let obj = {
+    "gameId": gameId,
     "home": {
       "name": "",
       "abbreviation": "",
