@@ -81,6 +81,41 @@ const teamNameMap = {
   "VGK": 54,
 };
 
+
+const longToShortMap = {
+  "New Jersey Devils": "NJD",
+  "New York Islanders": "NYI",
+  "New York Rangers": "NYR",
+  "Philadelphia Flyers": "PHI",
+  "Pittsburgh Penguins": "PIT",
+  "Boston Bruins": "BOS",
+  "Buffalo Sabres": "BUF",
+  "Montréal Canadiens": "MTL",
+  "Ottawa Senators": "OTT",
+  "Toronto Maple Leafs": "TOR",
+  "Carolina Hurricanes": "CAR",
+  "Florida Panthers": "FLA",
+  "Tampa Bay Lightning": "TBL",
+  "Washington Capitals": "WSH",
+  "Chicago Blackhawks": "CHI",
+  "Detroit Red Wings": "DET",
+  "Nashville Predators": "NSH",
+  "St. Louis Blues": "STL",
+  "Calgary Flames": "CGY",
+  "Colorado Avalanche": "COL",
+  "Edmonton Oilers": "EDM",
+  "Vancouver Canucks": "VAN",
+  "Anaheim Ducks": "ANA",
+  "Dallas Stars": "DAL",
+  "Los Angeles Kings": "LAK",
+  "San Jose Sharks": "SJS",
+  "Columbus Blue Jackets": "CBJ",
+  "Minnesota Wild": "MIN",
+  "Winnipeg Jets": "WPG",
+  "Arizona Coyotes": "ARI",
+  "Vegas Golden Knights": "VGK",
+};
+
 // A bucket is a container for objects (files).
 const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
 
@@ -216,11 +251,13 @@ function formatJson(json) {
   let obj = {
     "home": {
       "name": "",
-      "onIce": [],
+      "abbreviation": "",
+      "onIce": [], //fullName, number, positionCode
       "goals": "",
     },
     "away": {
       "name": "",
+      "abbreviation": "",
       "onIce": [],
       "goals": "",
     }
@@ -232,16 +269,20 @@ function formatJson(json) {
     let player = json['teams']['home']['players']['ID' + playerId]['person'];
     let fullName = player['fullName'];
     let number = player['primaryNumber'];
-    return { fullName, number };
+    let positionCode = player['primaryPosition']['code'];
+    return { fullName, number, positionCode };
   });
   obj['away']['onIce'] = json['teams']['away']['onIce'].map((playerId) => {
     let player = json['teams']['away']['players']['ID' + playerId]['person'];
     let fullName = player['fullName'];
     let number = player['primaryNumber'];
-    return { fullName, number };
+    let positionCode = player['primaryPosition']['code'];
+    return { fullName, number, positionCode };
   });
   obj['home']['goals'] = json['teams']['home']['teamStats']['teamSkaterStats']['goals'];
   obj['away']['goals'] = json['teams']['away']['teamStats']['teamSkaterStats']['goals'];
+  obj['home']['abbreviation'] = longToShortMap[obj['home']['name']];
+  obj['away']['abbreviation'] = longToShortMap[obj['away']['name']];
 
   return obj;
 
