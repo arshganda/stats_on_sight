@@ -118,9 +118,14 @@ app.post('/upload', multer.single('file'), (req, res, next) => {
     // Performs label detection on the image file
     const [result] = await client.textDetection(publicUrl);
     const detections = result.textAnnotations;
-    let teamIds = await getTeamIdsFromText(detections[0].description);
-    console.log(teamIds);
-    res.status(200).send(teamIds);
+    console.log(detections);
+    let teamIds;
+    if (detections.length > 0) {
+       teamIds = await getTeamIdsFromText(detections[0].description);
+    } else {
+      res.status(404).send({ error: "No text in image" });
+    }
+    res.status(200).json(teamIds);
   });
 
   blobStream.end(req.file.buffer);
@@ -144,13 +149,14 @@ const getTeamIdsFromText = async (description) => {
       teams.push(teamNameMap[word]);
     };
   });
+  if (teams.length === 0) return {};
   return await getCurrentGame(teams[0]);
   // return teams;
 };
 
 async function getCurrentGame(teamID) {
   return new Promise((resolve, reject) => {
-    let requestURL = "https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "?expand=team.schedule.next";
+    let requestURL = "https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "?expand=team.schedule.next&&expand=team.schedule.previous";
 
     httpClient.get(requestURL, (res) => {
       let body = "";
@@ -161,9 +167,16 @@ async function getCurrentGame(teamID) {
       res.on('end', async () => {
         try {
           let json = JSON.parse(body);
-          let gameID = (json['teams'][0]['nextGameSchedule']['dates'][0]['games'][0].gamePk);
-          console.log(gameID);
-          let retVal = await getGameStats(gameID);
+          let gameId;
+          let nextGame = (json['teams'][0]['nextGameSchedule']['dates'][0]['games'][0]);
+          if (nextGame['status']['abstractGameState'] == "Live") {
+            gameId = nextGame['gamePk'];
+          } else {
+            let prevGame = (json['teams'][0]['previousGameSchedule']['dates'][0]['games'][0]);
+            gameId = prevGame['gamePk'];
+          }
+          console.log(gameId);
+          let retVal = await getGameStats(gameId);
           return resolve(retVal);
         }
         catch (err) {
