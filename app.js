@@ -136,7 +136,7 @@ app.listen(PORT, () => {
 module.exports = app;
 
 const getTeamIdsFromText = async (description) => {
-  let words = description.split(" ");
+  let words = description.split(/[\s\n]+/);
   console.log(words);
   let teams = [];
   words.forEach((word) => {
@@ -188,7 +188,7 @@ async function getGameStats(gameID) {
         try {
           let json = JSON.parse(body);
           console.log(json);
-          return resolve(json);
+          return resolve(formatJson(json));
         }
         catch (err) {
           console.log(err);
@@ -197,4 +197,35 @@ async function getGameStats(gameID) {
       })
     });
   });
+}
+
+function formatJson(json) {
+  let obj = {
+    "home": {
+      "name": "",
+      "onIce": [],
+    },
+    "away": {
+      "name": "",
+      "onIce": [],
+    }
+  };
+
+  obj['home']['name'] = json['teams']['home']['team']['name'];
+  obj['away']['name'] = json['teams']['away']['team']['name'];
+  obj['home']['onIce'] = json['teams']['home']['onIce'].map((playerId) => {
+    let player = json['teams']['home']['players']['ID' + playerId]['person'];
+    let fullName = player['fullName'];
+    let number = player['primaryNumber'];
+    return { fullName, number };
+  });
+  obj['away']['onIce'] = json['teams']['away']['onIce'].map((playerId) => {
+    let player = json['teams']['away']['players']['ID' + playerId]['person'];
+    let fullName = player['fullName'];
+    let number = player['primaryNumber'];
+    return { fullName, number };
+  });
+
+  return obj;
+
 }
