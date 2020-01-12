@@ -1,40 +1,32 @@
-# Node.js Google Cloud Storage sample for Google App Engine
+### Stats On Sight
+This was a project developed at nwHacks 2020 with Alex Law (@acwlaw) and Sumeet Grewal (@sumeetgrewal). Find our full devpost article [here](https://devpost.com/software/stats-on-sight), and the repository to the iOS app [here](https://github.com/acwlaw/stats-on-sight-). 
 
-This sample demonstrates how to use [Google Cloud Storage](https://cloud.google.com/storage/)
-on [Google App Engine standard environment](https://cloud.google.com/appengine).
+## Inspiration
+For our second time around at nwHacks, we wanted to be adventurous and try our hands at a new piece of tech -- augmented reality. We're all big sports guys and have this problem where we're watching a game at a bar without sound, sometimes far from the screen so we're not getting the usual stats from the announcers over the course of the game. With Stats on Sight we wanted to make live game statistics more digestible from our phones. 
 
-## Setup
+## What it does
+Stats on Sight uses your phone camera to capture a live NHL broadcast, determine which teams are playing from the screen and then it displays a variety of statistics in augmented reality around the screen.
 
-Before you can run or deploy the sample, you will need to do the following:
+## How we built it
+We built an iOS app with **Swift** that identifies a vertical plane (the screen you're pointing at) with **ARKit**. Then, also with ARKit, we crop a rectangular image of the NHL game from the camera view and upload it to Google **Cloud Storage** via our **Node.js** API hosted with Google **App Engine**. 
 
-1. Enable the Cloud Storage API in the [Google Developers Console](https://console.developers.google.com/project/_/apiui/apiview/storage/overview).
+We then pass the image through Google Cloud's **Vision AI** and identify which two teams are playing. Given the two team names we can pull live stats from the **NHL's public API** and return that to the client, displaying the stats in an **AR** dashboard.
 
-1. Create a Cloud Storage Bucket. You can do this with the [Google Cloud SDK](https://cloud.google.com/sdk)
-with the following command:
+## Challenges we ran into
+ARKit was entirely new to our team. The documentation was really poor and hard to navigate which made it challenging to work with. We were also not expecting to be fooling around with 3D geometry or doing matrix transformations at 3 AM.  
+  
+At some point in the middle of the night, Google Vision AI was having a lot of trouble processing our images for some reason which stalled our progress. 
 
-        gsutil mb gs://<your-bucket-name>
+The most technically challenging part of this project was anchoring the stats that we wanted to render with ARKit to the actual laptop screen. The reason this was hard was because the "anchor" that we attach our AR stats to is the live-broadcasted game which is constantly changing.
 
-1. Set the default ACL on your bucket to public read in order to serve files
-directly from Cloud Storage. You can do this with the [Google Cloud SDK](https://cloud.google.com/sdk)
-with the following command:
+## Accomplishments that we're proud of
+- How quickly and easily we were able to deploy our services to Google Cloud
+- Figuring out how to piece ARKit together
 
-        gsutil defacl set public-read gs://<your-bucket-name>
+## What we learned
+- How to store data in Google Cloud Storage and access bucket data
+- Re-learned everything we had forgotten from linear algebra class
+- How to navigate new technology as we did with ARKit
 
-1. Update the environment variables in `app.yaml`.
-
-## Running locally
-
-Refer to the [top-level README](../../README.md) for instructions on running and
-deploying.
-
-When running locally, you can use the [Google Cloud SDK](https://cloud.google.com/sdk)
-to provide authentication to use Google Cloud APIs:
-
-    gcloud init
-
-Then set environment variables before starting your application:
-
-    export GOOGLE_CLOUD_PROJECT=<your-project-id>
-    export GCLOUD_STORAGE_BUCKET=<your-bucket-name>
-    npm install
-    npm start
+## What's next for Stats on Sight
+Its evolution into a cool party trick to show friends.
