@@ -254,7 +254,7 @@ async function getGameStats(gameID) {
 
 function formatJson(json, gameId) {
   let obj = {
-    "gameId": gameId,
+    "gameId": gameId.toString(),
     "home": {
       "name": "",
       "abbreviation": "",
