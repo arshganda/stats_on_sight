@@ -118,8 +118,8 @@ app.post('/upload', multer.single('file'), (req, res, next) => {
     // Performs label detection on the image file
     const [result] = await client.textDetection(publicUrl);
     const detections = result.textAnnotations;
-    let teamIds = getTeamIdsFromText(detections[0].description);
-
+    let teamIds = await getTeamIdsFromText(detections[0].description);
+    console.log(teamIds);
     res.status(200).send(teamIds);
   });
 
@@ -135,56 +135,66 @@ app.listen(PORT, () => {
 
 module.exports = app;
 
-const getTeamIdsFromText = (description) => {
+const getTeamIdsFromText = async (description) => {
   let words = description.split(" ");
+  console.log(words);
   let teams = [];
   words.forEach((word) => {
     if (teamNameMap.hasOwnProperty(word)) {
       teams.push(teamNameMap[word]);
     };
   });
-  getCurrentGame(teams[0]);
-  return teams;
+  return await getCurrentGame(teams[0]);
+  // return teams;
 };
 
-function getCurrentGame(teamID) {
-  let requestURL = "https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "?expand=team.schedule.next";
-  httpClient.get(requestURL, (res) => {
-    let body = "";
-    res.on('data', (chunk) => {
-      body += chunk;
-    })
+async function getCurrentGame(teamID) {
+  return new Promise((resolve, reject) => {
+    let requestURL = "https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "?expand=team.schedule.next";
 
-    res.on('end', () => {
-      try {
-        let json = JSON.parse(body);
-        let gameID = (json['teams'][0]['nextGameSchedule']['dates'][0]['games'][0].gamePk);
-        console.log(gameID);
-        getGameStats(gameID);
-      }
-      catch (err) {
-        console.log(err);
-      }
-    })
+    httpClient.get(requestURL, (res) => {
+      let body = "";
+      res.on('data', (chunk) => {
+        body += chunk;
+      })
+
+      res.on('end', async () => {
+        try {
+          let json = JSON.parse(body);
+          let gameID = (json['teams'][0]['nextGameSchedule']['dates'][0]['games'][0].gamePk);
+          console.log(gameID);
+          let retVal = await getGameStats(gameID);
+          return resolve(retVal);
+        }
+        catch (err) {
+          console.log(err);
+          reject(err);
+        }
+      })
+    });
   });
 }
 
-function getGameStats(gameID) {
-  let requestURL = "https://statsapi.web.nhl.com/api/v1/game/" + gameID + "/boxscore";
-  httpClient.get(requestURL, (res) => {
-    let body = "";
-    res.on('data', (chunk) => {
-      body += chunk;
-    })
+async function getGameStats(gameID) {
+  return new Promise((resolve, reject) => {
+    let requestURL = "https://statsapi.web.nhl.com/api/v1/game/" + gameID + "/boxscore";
+    httpClient.get(requestURL, (res) => {
+      let body = "";
+      res.on('data', (chunk) => {
+        body += chunk;
+      })
 
-    res.on('end', () => {
-      try {
-        let json = JSON.parse(body);
-        console.log(json);
-      }
-      catch (err) {
-        console.log(err);
-      }
-    })
+      res.on('end', () => {
+        try {
+          let json = JSON.parse(body);
+          console.log(json);
+          return resolve(json);
+        }
+        catch (err) {
+          console.log(err);
+          reject(err);
+        }
+      })
+    });
   });
 }
