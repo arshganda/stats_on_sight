@@ -121,7 +121,7 @@ app.post('/upload', multer.single('file'), (req, res, next) => {
     console.log(detections);
     let teamIds;
     if (detections.length > 0) {
-       teamIds = await getTeamIdsFromText(detections[0].description);
+      teamIds = await getTeamIdsFromText(detections[0].description);
     } else {
       res.status(404).send({ error: "No text in image" });
     }
@@ -217,10 +217,12 @@ function formatJson(json) {
     "home": {
       "name": "",
       "onIce": [],
+      "goals": "",
     },
     "away": {
       "name": "",
       "onIce": [],
+      "goals": "",
     }
   };
 
@@ -238,6 +240,8 @@ function formatJson(json) {
     let number = player['primaryNumber'];
     return { fullName, number };
   });
+  obj['home']['goals'] = json['teams']['home']['teamStats']['teamSkaterStats']['goals'];
+  obj['away']['goals'] = json['teams']['away']['teamStats']['teamSkaterStats']['goals'];
 
   return obj;
 
