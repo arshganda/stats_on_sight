@@ -1,4 +1,4 @@
-### Stats On Sight
+## Stats On Sight
 This was a project developed at nwHacks 2020 with Alex Law (@acwlaw) and Sumeet Grewal (@sumeetgrewal). Find our full devpost article [here](https://devpost.com/software/stats-on-sight), and the repository to the iOS app [here](https://github.com/acwlaw/stats-on-sight-). 
 
 ## Inspiration
