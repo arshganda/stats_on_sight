@@ -1,5 +1,12 @@
 ## Stats On Sight
-This was a project developed at nwHacks 2020 with Alex Law (@acwlaw) and Sumeet Grewal (@sumeetgrewal). Find our full devpost article [here](https://devpost.com/software/stats-on-sight), and the repository to the iOS app [here](https://github.com/acwlaw/stats-on-sight-). 
+
+####nwHacks 2020 Popular Vote winners 
+This was a project developed at nwHacks 2020 with Alex Law (@acwlaw) and Sumeet Grewal (@sumeetgrewal). Find our full devpost article [here](https://devpost.com/software/stats-on-sight), and the repository to the iOS app [here](https://github.com/acwlaw/stats-on-sight-).  
+  
+Click on the image below to be taken to the video demo.
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=SHfXLdixfSY
+" target="_blank"><img src="http://img.youtube.com/vi/SHfXLdixfSY/0.jpg" 
+alt="Video thumbnail" width="240" height="180" border="10" /></a>
 
 ## Inspiration
 For our second time around at nwHacks, we wanted to be adventurous and try our hands at a new piece of tech -- augmented reality. We're all big sports guys and have this problem where we're watching a game at a bar without sound, sometimes far from the screen so we're not getting the usual stats from the announcers over the course of the game. With Stats on Sight we wanted to make live game statistics more digestible from our phones. 
