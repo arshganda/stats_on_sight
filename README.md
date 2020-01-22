@@ -3,7 +3,7 @@
 ####nwHacks 2020 Popular Vote winners 
 This was a project developed at nwHacks 2020 with Alex Law (@acwlaw) and Sumeet Grewal (@sumeetgrewal). Find our full devpost article [here](https://devpost.com/software/stats-on-sight), and the repository to the iOS app [here](https://github.com/acwlaw/stats-on-sight-).  
   
-Click on the image below to be taken to the video demo.
+Click on the image below to be taken to the video demo.  
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=SHfXLdixfSY
 " target="_blank"><img src="http://img.youtube.com/vi/SHfXLdixfSY/0.jpg" 
 alt="Video thumbnail" width="240" height="180" border="10" /></a>
